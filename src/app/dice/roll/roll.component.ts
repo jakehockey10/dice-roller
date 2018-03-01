@@ -15,6 +15,7 @@ const OrbitControls = require('three-orbit-controls')(THREE);
 export class RollComponent implements OnInit {
 
   @ViewChild('canvasWrapper') canvasWrapper: ElementRef;
+  rollDone = false;
   private _world: CANNON.World;
   private _dice: DiceD6[] = [];
   private _scene: THREE.Scene;
@@ -22,6 +23,7 @@ export class RollComponent implements OnInit {
   private _camera: THREE.PerspectiveCamera;
   private _controls: any;
   private _stats: any;
+  private _throwRunning: boolean;
   private readonly WIDTH = window.innerWidth - 48;
   private readonly HEIGHT = window.innerHeight - 10;
   private readonly VIEW_ANGLE = 45;
@@ -117,7 +119,7 @@ export class RollComponent implements OnInit {
       this._dice.push(die);
     }
 
-    setInterval(() => this.randomDiceThrow(), 3000);
+    // setInterval(() => this.randomDiceThrow(), 10000);
     this.randomDiceThrow();
     requestAnimationFrame(() => this.animate());
   }
@@ -138,10 +140,78 @@ export class RollComponent implements OnInit {
       this._dice[i].getObject().body.angularVelocity.set(20 * Math.random() - 10, 20 * Math.random() - 10, 20 * Math.random() - 10);
       diceValues.push({ dice: this._dice[i], value: i + 1 });
     }
-    DiceManager.prepareValues(diceValues);
+    this.prepareValues(diceValues);
+  }
+
+  /**
+   *
+   * @param {array} diceValues
+   * @param {DiceObject} [diceValues.dice]
+   * @param {number} [diceValues.value]
+   *
+   */
+  prepareValues(diceValues) {
+    if (this._throwRunning) {
+      throw new Error('Cannot start another throw. Please wait, till the current throw is finished.');
+    }
+
+    for (let i = 0; i < diceValues.length; i++) {
+      if (diceValues[i].value < 1 || diceValues[i].dice.values < diceValues[i].value) {
+        throw new Error('Cannot throw die to value ' +
+          diceValues[i].value +
+          ', because it has only ' +
+          diceValues[i].dice.values +
+          ' sides.');
+      }
+    }
+
+    this._throwRunning = true;
+
+    for (let i = 0; i < diceValues.length; i++) {
+      diceValues[i].dice.simulationRunning = true;
+      diceValues[i].vectors = diceValues[i].dice.getCurrentVectors();
+      diceValues[i].stableCount = 0;
+    }
+
+    const check = () => {
+      // let allStable = true;
+      // for (let i = 0; i < diceValues.length; i++) {
+      //   if (diceValues[i].dice.isFinished()) {
+      //     diceValues[i].stableCount++;
+      //   } else {
+      //     diceValues[i].stableCount = 0;
+      //   }
+
+      //   if (diceValues[i].stableCount < 50) {
+      //     allStable = false;
+      //   }
+      // }
+
+      // if (allStable) {
+      if (this._dice.every(d => d.isFinished())) {
+        DiceManager.world.removeEventListener('postStep', check);
+        for (let i = 0; i < diceValues.length; i++) {
+          // diceValues[i].dice.shiftUpperValue(diceValues[i].value);
+          diceValues[i].dice.setVectors(diceValues[i].vectors);
+          diceValues[i].dice.simulationRunning = false;
+        }
+
+        console.log(this._dice.map(d => d.getUpsideValue()));
+
+        this._throwRunning = false;
+      } else {
+        DiceManager.world.step(DiceManager.world.dt);
+      }
+    };
+
+    this._world.addEventListener('postStep', check);
   }
 
   private animate() {
+    if (this._dice.every(d => d.isFinished()) && !this.rollDone) {
+      this.rollDone = true;
+      console.log('really done?');
+    }
     this.updatePhysics();
     this.render();
     this.update();
