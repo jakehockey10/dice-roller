@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import * as CANNON from 'cannon';
 import * as THREE from 'three';
 import { Stats } from 'three-stats';
@@ -12,10 +12,9 @@ const OrbitControls = require('three-orbit-controls')(THREE);
   templateUrl: './roll.component.html',
   styleUrls: ['./roll.component.scss']
 })
-export class RollComponent implements OnInit {
+export class RollComponent implements OnInit, OnDestroy {
 
   @ViewChild('canvasWrapper') canvasWrapper: ElementRef;
-  rollDone = false;
   private _world: CANNON.World;
   private _dice: DiceD6[] = [];
   private _scene: THREE.Scene;
@@ -24,26 +23,40 @@ export class RollComponent implements OnInit {
   private _controls: any;
   private _stats: any;
   private _throwRunning: boolean;
-  private readonly WIDTH = window.innerWidth - 48;
-  private readonly HEIGHT = window.innerHeight - 10;
   private readonly VIEW_ANGLE = 45;
   private readonly NEAR = 0.01;
   private readonly FAR = 20000;
-  private readonly ASPECT = this.WIDTH / this.HEIGHT;
 
   constructor(private _self: ElementRef) { }
 
+  private get width() {
+    return window.innerWidth - 48;
+  }
+
+  private get height() {
+    return window.innerHeight - 400;
+  }
+
+  private get aspect() {
+    return this.width / this.height;
+  }
+
   ngOnInit() {
+    window.addEventListener('resize', () => {
+      this._camera.aspect = this.aspect;
+      this._camera.updateProjectionMatrix();
+      this._renderer.setSize(this.width, this.height);
+    });
     this._scene = new THREE.Scene();
 
     // CAMERA
-    this._camera = new THREE.PerspectiveCamera(this.VIEW_ANGLE, this.ASPECT, this.NEAR, this.FAR);
+    this._camera = new THREE.PerspectiveCamera(this.VIEW_ANGLE, this.aspect, this.NEAR, this.FAR);
     this._scene.add(this._camera);
     this._camera.position.set(0, 30, 30);
 
     // RENDERER
     this._renderer = new THREE.WebGLRenderer({ antialias: true });
-    this._renderer.setSize(this.WIDTH, this.HEIGHT);
+    this._renderer.setSize(this.width, this.height);
     this._renderer.shadowMap.enabled = true;
     this._renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
@@ -56,8 +69,8 @@ export class RollComponent implements OnInit {
 
     // STATS
     this._stats = new Stats();
-    this._stats.domElement.style.position = 'absolute';
-    this._stats.domElement.style.top = '84px';
+    this._stats.domElement.style.position = 'relative';
+    this._stats.domElement.style.top = '-90%';
     this._stats.domElement.style.left = '24px';
     this._stats.domElement.style.zIndex = 100;
     container.appendChild(this._stats.domElement);
@@ -119,9 +132,16 @@ export class RollComponent implements OnInit {
       this._dice.push(die);
     }
 
-    // setInterval(() => this.randomDiceThrow(), 10000);
     this.randomDiceThrow();
     requestAnimationFrame(() => this.animate());
+  }
+
+  ngOnDestroy(): void {
+    window.removeEventListener('resize');
+  }
+
+  roll() {
+    this.randomDiceThrow();
   }
 
   private randomDiceThrow() {
@@ -150,7 +170,7 @@ export class RollComponent implements OnInit {
    * @param {number} [diceValues.value]
    *
    */
-  prepareValues(diceValues) {
+  private prepareValues(diceValues) {
     if (this._throwRunning) {
       throw new Error('Cannot start another throw. Please wait, till the current throw is finished.');
     }
@@ -188,7 +208,10 @@ export class RollComponent implements OnInit {
       // }
 
       // if (allStable) {
+      //   console.log('all stable');
+      // }
       if (this._dice.every(d => d.isFinished())) {
+        console.log('every dice is finished');
         DiceManager.world.removeEventListener('postStep', check);
         for (let i = 0; i < diceValues.length; i++) {
           // diceValues[i].dice.shiftUpperValue(diceValues[i].value);
@@ -200,6 +223,7 @@ export class RollComponent implements OnInit {
 
         this._throwRunning = false;
       } else {
+        console.log('world step!');
         DiceManager.world.step(DiceManager.world.dt);
       }
     };
@@ -208,10 +232,6 @@ export class RollComponent implements OnInit {
   }
 
   private animate() {
-    if (this._dice.every(d => d.isFinished()) && !this.rollDone) {
-      this.rollDone = true;
-      console.log('really done?');
-    }
     this.updatePhysics();
     this.render();
     this.update();
