@@ -2,24 +2,29 @@
     <div class="col-lg-5 col-md-8 col-sm-12 col-xs-12">
         <div class="card">
             <div class="card-header">
-                Header
+                Current Dice Roll
             </div>
             <div class="card-block">
                 <div class="card-title">
-                    Block
+                    Results
                 </div>
-                <div class="card-text">
-                    ...
+                <div class="card-text"
+                     style="display: flex; justify-content: space-between;">
+                    <span *ngFor="let result of results"
+                          [style.color]="result.color">
+                        <strong style="font-size: 20px;">{{result.value}}</strong>
+                    </span>
                 </div>
             </div>
             <div class="card-footer">
                 <button class="btn btn-sm btn-link"
-                        (click)="roll()">Roll Again</button>
+                        (click)="roll()">{{diceAddedToScene ? 'Roll Again' : 'Roll'}}</button>
+                <button class="btn btn-sm btn-link"
+                        (click)="toggleStatsVisibility()">{{statsShowing ? 'Hide stats' : 'Show stats'}}</button>
             </div>
         </div>
     </div>
 </div>
-
 <div class="row"
      style="margin-top: 10px;">
     <div #canvasWrapper

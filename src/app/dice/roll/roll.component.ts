@@ -2,7 +2,7 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import * as CANNON from 'cannon';
 import * as THREE from 'three';
 import { Stats } from 'three-stats';
-import { DiceD6, DiceManager } from 'threejs-dice';
+import { DiceD6, DiceManager, DiceObject } from 'threejs-dice';
 
 declare const require: (moduleId: string) => any;
 const OrbitControls = require('three-orbit-controls')(THREE);
@@ -15,6 +15,9 @@ const OrbitControls = require('three-orbit-controls')(THREE);
 export class RollComponent implements OnInit, OnDestroy {
 
   @ViewChild('canvasWrapper') canvasWrapper: ElementRef;
+  results: any;
+  diceAddedToScene = false;
+  statsShowing = true;
   private _world: CANNON.World;
   private _dice: DiceD6[] = [];
   private _scene: THREE.Scene;
@@ -101,11 +104,28 @@ export class RollComponent implements OnInit, OnDestroy {
     floor.rotation.x = Math.PI / 2;
     this._scene.add(floor);
 
+    // WALL 1
+    const wallMaterial = new THREE.MeshPhongMaterial({ color: '#222222', side: THREE.DoubleSide });
+    const wallGeometry = new THREE.PlaneGeometry(30, 5, 10, 10);
+    const wall = new THREE.Mesh(wallGeometry, wallMaterial);
+    wall.receiveShadow = true;
+    wall.rotation.y = Math.PI / 2;
+    wall.translateZ(15);
+    wall.translateY(2.5);
+    this._scene.add(wall);
+
+    // WALL 2
+    const wall2 = new THREE.Mesh(wallGeometry, wallMaterial);
+    wall2.receiveShadow = true;
+    wall2.translateZ(15);
+    wall2.translateY(2.5);
+    this._scene.add(wall2);
+
     // SKYBOX/FOG
     const skyBoxGeometry = new THREE.BoxGeometry(10000, 10000, 10000);
     const skyBoxMaterial = new THREE.MeshPhongMaterial({ color: 0x9999ff, side: THREE.BackSide });
     const skyBox = new THREE.Mesh(skyBoxGeometry, skyBoxMaterial);
-    // scene.add(skyBox);
+    // this._scene.add(skyBox);
     this._scene.fog = new THREE.FogExp2(0x9999ff, 0.00025);
 
     ////////////
@@ -124,27 +144,50 @@ export class RollComponent implements OnInit, OnDestroy {
     floorBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
     this._world.addBody(floorBody);
 
-    // Walls
+    // Wall 1
+    const wallShape = new CANNON.Box(new CANNON.Vec3(2, 5, 30));
+    const wallBody = new CANNON.Body({ mass: 0 });
+    wallBody.addShape(wallShape);
+    wallBody.position.set(17, 0, 0);
+    this._world.addBody(wallBody);
+
+    // Wall 2
+    const wallShape2 = new CANNON.Box(new CANNON.Vec3(30, 5, 2));
+    const wallBody2 = new CANNON.Body({ mass: 0 });
+    wallBody2.addShape(wallShape2);
+    wallBody2.position.set(0, 0, 17);
+    this._world.addBody(wallBody2);
+
+    // Dice
     const colors = ['#ff0000', '#ffff00', '#00ff00', '#0000ff', '#ff00ff'];
     for (let i = 0; i < 5; i++) {
       const die = new DiceD6({ size: 1.5, backColor: colors[i] });
-      this._scene.add(die.getObject());
+      // this._scene.add(die.getObject());
       this._dice.push(die);
     }
 
-    this.randomDiceThrow();
     requestAnimationFrame(() => this.animate());
   }
 
   ngOnDestroy(): void {
-    window.removeEventListener('resize');
+    // window.removeEventListener('resize');
   }
 
   roll() {
     this.randomDiceThrow();
   }
 
+  toggleStatsVisibility() {
+    this._stats.domElement.style.visibility = this._stats.domElement.style.visibility === 'hidden' ? 'visible' : 'hidden';
+    this.statsShowing = this._stats.domElement.style.visibility === 'visible';
+  }
+
   private randomDiceThrow() {
+    if (this.diceAddedToScene === false) {
+      this._dice.forEach(d => this._scene.add(d.getObject()));
+      this.diceAddedToScene = true;
+    }
+
     const diceValues = [];
 
     for (let i = 0; i < this._dice.length; i++) {
@@ -194,36 +237,35 @@ export class RollComponent implements OnInit, OnDestroy {
     }
 
     const check = () => {
-      // let allStable = true;
-      // for (let i = 0; i < diceValues.length; i++) {
-      //   if (diceValues[i].dice.isFinished()) {
-      //     diceValues[i].stableCount++;
-      //   } else {
-      //     diceValues[i].stableCount = 0;
-      //   }
+      let allStable = true;
+      for (let i = 0; i < diceValues.length; i++) {
+        if (diceValues[i].dice.isFinished()) {
+          diceValues[i].stableCount++;
+        } else {
+          diceValues[i].stableCount = 0;
+        }
 
-      //   if (diceValues[i].stableCount < 50) {
-      //     allStable = false;
-      //   }
-      // }
+        if (diceValues[i].stableCount < 50) {
+          allStable = false;
+        }
+      }
 
-      // if (allStable) {
-      //   console.log('all stable');
-      // }
-      if (this._dice.every(d => d.isFinished())) {
+      if (allStable) {
+        this.results = this._dice.map(d => {
+          return {
+            value: d.getUpsideValue(),
+            color: (<any>d).diceColor
+          };
+        });
         console.log('every dice is finished');
         DiceManager.world.removeEventListener('postStep', check);
         for (let i = 0; i < diceValues.length; i++) {
-          // diceValues[i].dice.shiftUpperValue(diceValues[i].value);
           diceValues[i].dice.setVectors(diceValues[i].vectors);
           diceValues[i].dice.simulationRunning = false;
         }
 
-        console.log(this._dice.map(d => d.getUpsideValue()));
-
         this._throwRunning = false;
       } else {
-        console.log('world step!');
         DiceManager.world.step(DiceManager.world.dt);
       }
     };
