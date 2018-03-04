@@ -5,6 +5,8 @@ import * as THREE from 'three';
 import { Stats } from 'three-stats';
 import { DiceD6, DiceManager } from 'threejs-dice';
 
+import { ThrowSpeed } from './throw-speed.enum';
+
 declare const require: (moduleId: string) => any;
 const OrbitControls = require('three-orbit-controls')(THREE);
 
@@ -102,7 +104,7 @@ export class DiceService {
     }
   }
 
-  randomDiceThrow() {
+  randomDiceThrow(throwSpeed: ThrowSpeed) {
 
     const diceValues: { dice: DiceD6, value: number }[] = [];
 
@@ -114,7 +116,18 @@ export class DiceService {
       this._dice[i].getObject().quaternion.x = (Math.random() * 90 - 45) * Math.PI / 180;
       this._dice[i].getObject().quaternion.z = (Math.random() * 90 - 45) * Math.PI / 180;
       this._dice[i].updateBodyFromMesh();
-      const rand = Math.random() * 5;
+      let rand = Math.random() * 5;
+      switch (throwSpeed) {
+        case ThrowSpeed.slow:
+          rand = rand + 5;
+          break;
+        case ThrowSpeed.medium:
+          rand = rand + 10;
+          break;
+        case ThrowSpeed.hard:
+          rand = rand + 30;
+          break;
+      }
       this._dice[i].getObject().body.velocity.set(25 + rand, 40 + yRand, 15 + rand);
       this._dice[i].getObject().body.angularVelocity.set(20 * Math.random() - 10, 20 * Math.random() - 10, 20 * Math.random() - 10);
       diceValues.push({ dice: this._dice[i], value: i + 1 });

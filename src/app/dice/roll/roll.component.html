@@ -1,79 +1,14 @@
 <div class="row">
     <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-        <div class="card">
-            <div class="card-header">Settings</div>
-            <div class="card-block">
-                <!-- <div class="card-title">Settings</div> -->
-                <form>
-                    <section class="form-block">
-                        <div class="form-group">
-                            <label>Stats</label>
-                            <div class="toggle-switch">
-                                <input type="checkbox"
-                                       id="statsToggle"
-                                       name="statsShowing"
-                                       [(ngModel)]="statsShowing"
-                                       (ngModelChange)="statsShowingChange($event)">
-                                <label for="statsToggle"></label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Sky Box</label>
-                            <div class="toggle-switch">
-                                <input type="checkbox"
-                                       id="skyBoxToggle"
-                                       name="skyBoxShowing"
-                                       [(ngModel)]="skyBoxShowing"
-                                       (ngModelChange)="skyBoxShowingChange($event)">
-                                <label for="skyBoxToggle"></label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Number of dice</label>
-                            <input type="number"
-                                   id="numberOfDice"
-                                   name="numberOfDice"
-                                   min="1"
-                                   max="6"
-                                   [(ngModel)]="numberOfDice"
-                                   (ngModelChange)="numberOfDiceChange($event)">
-                        </div>
-                    </section>
-                </form>
-            </div>
-        </div>
+        <app-settings [statsShowing]="false"
+                      [skyBoxShowing]="false"
+                      [numberOfDice]="2"></app-settings>
     </div>
     <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-        <div class="card">
-            <div class="card-header">Current Results</div>
-            <div class="card-block">
-                <!-- <div class="card-title">
-                    Current Results
-                </div> -->
-                <div class="card-text"
-                     style="display: flex; justify-content: space-between;">
-                    <span></span>
-                    <span *ngFor="let result of results"
-                          [style.color]="result.color">
-                        <strong style="font-size: 30px;">{{result.value}}</strong>
-                    </span>
-                    <span></span>
-                </div>
-            </div>
-            <div class="card-footer">
-                <button class="btn btn-link"
-                        (click)="roll()">Roll</button>
-            </div>
-        </div>
+        <app-current-roll (rollClick)="roll($event)"></app-current-roll>
     </div>
     <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
-        <div class="card">
-            <div class="card-header">Overall Results</div>
-            <div class="card-block">
-                <google-chart #chart
-                              [data]="chartData"></google-chart>
-            </div>
-        </div>
+        <app-chart></app-chart>
     </div>
 </div>
 <div class="row"

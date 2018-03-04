@@ -7,6 +7,10 @@ import { UiModule } from './../ui/ui.module';
 import { DiceRoutingModule } from './dice-routing.module';
 import { DiceService } from './dice.service';
 import { RollComponent } from './roll/roll.component';
+import { ChartService } from './chart.service';
+import { SettingsComponent } from './settings/settings.component';
+import { ChartComponent } from './chart/chart.component';
+import { CurrentRollComponent } from './current-roll/current-roll.component';
 
 @NgModule({
   imports: [
@@ -16,7 +20,7 @@ import { RollComponent } from './roll/roll.component';
     UiModule,
     Ng2GoogleChartsModule
   ],
-  declarations: [RollComponent],
-  providers: [DiceService]
+  declarations: [RollComponent, SettingsComponent, ChartComponent, CurrentRollComponent],
+  providers: [DiceService, ChartService]
 })
 export class DiceModule { }
