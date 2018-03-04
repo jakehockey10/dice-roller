@@ -1,8 +1,9 @@
 <div class="row">
     <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
         <div class="card">
+            <div class="card-header">Settings</div>
             <div class="card-block">
-                <div class="card-title">Settings</div>
+                <!-- <div class="card-title">Settings</div> -->
                 <form>
                     <section class="form-block">
                         <div class="form-group">
@@ -44,34 +45,33 @@
     </div>
     <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
         <div class="card">
+            <div class="card-header">Current Results</div>
             <div class="card-block">
-                <div class="card-title">
+                <!-- <div class="card-title">
                     Current Results
-                </div>
+                </div> -->
                 <div class="card-text"
                      style="display: flex; justify-content: space-between;">
+                    <span></span>
                     <span *ngFor="let result of results"
                           [style.color]="result.color">
-                        <strong style="font-size: 20px;">{{result.value}}</strong>
+                        <strong style="font-size: 30px;">{{result.value}}</strong>
                     </span>
+                    <span></span>
                 </div>
             </div>
             <div class="card-footer">
-                <button class="btn btn-sm btn-link"
+                <button class="btn btn-link"
                         (click)="roll()">Roll</button>
             </div>
         </div>
     </div>
-    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+    <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
         <div class="card">
+            <div class="card-header">Overall Results</div>
             <div class="card-block">
-                <div class="card-title">
-                    Overall Results
-                </div>
-                <div class="card-text">
-                </div>
-            </div>
-            <div class="card-footer">
+                <google-chart #chart
+                              [data]="chartData"></google-chart>
             </div>
         </div>
     </div>
