@@ -7,11 +7,11 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 This project uses [`threejs`](https://github.com/mrdoob/three.js), [`cannonjs`](https://github.com/schteppe/cannon.js), and [`threejs-Dice`](https://github.com/jakehockey10/threejs-dice) to provide a graphically sophisticated dice rolling simulator.  **Note: I had to fork and change a few things with the `threejs-Dice` library and use my own fork in this project in order to get it tow work with TypeScript/Angular.  The way it export its functionality needed to be adjusted.  You can see my pull request [here](https://github.com/byWulf/threejs-dice/pull/4).
 
 ### Things focused on in this demo application are:
-- routing
-- master-child component interaction
-- integration with third-party libraries NOT written in TypeScript
-- multiple-module organization
-- component, service, and end-to-end testing
+- Routing
+- Master-child component interaction
+- Integration with third-party libraries NOT written in TypeScript
+- Multiple-module organization
+- Component, service, and end-to-end testing
 - Use of third-party UI framework ([clarity](https://vmware.github.io/clarity/))
 
 I have deployed this to my github pages: https://jakehockey10.github.io/dice-roller/
