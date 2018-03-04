@@ -11,7 +11,9 @@ export class RollComponent implements OnInit, OnDestroy {
 
   @ViewChild('canvasWrapper') canvasWrapper: ElementRef;
   results: any;
-  statsShowing = true;
+  statsShowing = false;
+  skyBoxShowing = false;
+  numberOfDice = 2;
 
   constructor(
     private _self: ElementRef,
@@ -22,6 +24,9 @@ export class RollComponent implements OnInit, OnDestroy {
     const container = this.canvasWrapper.nativeElement;
     container.appendChild(this._diceService.rendererDOMElement);
     container.appendChild(this._diceService.statsDOMElement);
+    this._diceService.statsVisible = this.statsShowing;
+    this._diceService.skyBoxVisible = this.skyBoxShowing;
+    this._diceService.numberOfDice = this.numberOfDice;
     this._diceService.results.subscribe(results => this.results = results);
     requestAnimationFrame(() => this.animate());
   }
@@ -34,8 +39,16 @@ export class RollComponent implements OnInit, OnDestroy {
     this._diceService.randomDiceThrow();
   }
 
-  toggleStatsVisibility() {
-    this.statsShowing = this._diceService.toggleStatsVisibility();
+  statsShowingChange(showing: boolean) {
+    this._diceService.statsVisible = showing;
+  }
+
+  skyBoxShowingChange(showing: boolean) {
+    this._diceService.skyBoxVisible = showing;
+  }
+
+  numberOfDiceChange(numberOfDice: number) {
+    this._diceService.numberOfDice = numberOfDice;
   }
 
   private animate() {

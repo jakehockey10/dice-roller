@@ -16,6 +16,7 @@ export class DiceService {
   private _scene: THREE.Scene;
   private _renderer: THREE.WebGLRenderer;
   private _camera: THREE.PerspectiveCamera;
+  private _skyBox: THREE.Mesh;
   private _controls: any;
   private _stats: Stats;
   private _throwRunning: boolean;
@@ -23,7 +24,6 @@ export class DiceService {
   private readonly NEAR = 0.01;
   private readonly FAR = 20000;
 
-  diceAddedToScene = false;
   // TODO: specify type when results type is final
   results: Subject<{ value: number, color: any }[]> = new Subject();
 
@@ -52,7 +52,6 @@ export class DiceService {
     this.addFloorBody();
     this.addWallBody1();
     this.addWallBody2();
-    this.addDice();
   }
 
   private get width() {
@@ -75,18 +74,37 @@ export class DiceService {
     return this._stats.domElement;
   }
 
-  toggleStatsVisibility(): boolean {
-    this._stats.domElement.style.visibility = this._stats.domElement.style.visibility === 'hidden' ? 'visible' : 'hidden';
-    return this._stats.domElement.style.visibility === 'visible';
+  set statsVisible(value: boolean) {
+    this._stats.domElement.style.visibility = value ? 'visible' : 'hidden';
+  }
+
+  set skyBoxVisible(value: boolean) {
+    const sceneContainsSkyBox = this._scene.getObjectByName('skyBox');
+    if (value) {
+      if (!sceneContainsSkyBox) {
+        this._scene.add(this._skyBox);
+      }
+    } else {
+      this._scene.remove(this._skyBox);
+    }
+  }
+
+  set numberOfDice(value: number) {
+    let diceToAdd = value - this._dice.length;
+    if (diceToAdd > 0) {
+      this.addDice(diceToAdd);
+    } else {
+      while (diceToAdd !== 0) {
+        const d = this._dice.pop();
+        this._scene.remove(d.getObject());
+        diceToAdd--;
+      }
+    }
   }
 
   randomDiceThrow() {
-    if (this.diceAddedToScene === false) {
-      this._dice.forEach(d => this._scene.add(d.getObject()));
-      this.diceAddedToScene = true;
-    }
 
-    const diceValues = [];
+    const diceValues: { dice: DiceD6, value: number }[] = [];
 
     for (let i = 0; i < this._dice.length; i++) {
       const yRand = Math.random() * 20;
@@ -205,8 +223,9 @@ export class DiceService {
   private addSkyBox() {
     const skyBoxGeometry = new THREE.BoxGeometry(10000, 10000, 10000);
     const skyBoxMaterial = new THREE.MeshPhongMaterial({ color: 0x9999ff, side: THREE.BackSide });
-    const skyBox = new THREE.Mesh(skyBoxGeometry, skyBoxMaterial);
-    this._scene.add(skyBox);
+    this._skyBox = new THREE.Mesh(skyBoxGeometry, skyBoxMaterial);
+    this._skyBox.name = 'skyBox';
+    this._scene.add(this._skyBox);
   }
 
   private addFog() {
@@ -244,13 +263,21 @@ export class DiceService {
     this._world.addBody(wallBody2);
   }
 
-  private addDice() {
-    const colors = ['#ff0000', '#ffff00', '#00ff00', '#0000ff', '#ff00ff'];
-    for (let i = 0; i < 5; i++) {
-      const die = new DiceD6({ size: 1.5, backColor: colors[i] });
-      // this._scene.add(die.getObject());
+  private addDice(numberOfDice: number) {
+    for (let i = 0; i < numberOfDice; i++) {
+      const die = new DiceD6({ size: 1.5, backColor: this.getRandomColor() });
+      this._scene.add(die.getObject());
       this._dice.push(die);
     }
+  }
+
+  private getRandomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
   }
 
   /**
