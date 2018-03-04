@@ -14,7 +14,7 @@ This project uses [`threejs`](https://github.com/mrdoob/three.js), [`cannonjs`](
 - Component, service, and end-to-end testing
 - Use of third-party UI framework ([clarity](https://vmware.github.io/clarity/))
 
-I have deployed this to my github pages: <a href="https://jakehockey10.github.io/dice-roller/" target="_blank">Dice Roller</a>
+I have deployed this to my github pages: [Dice Roller](https://jakehockey10.github.io/dice-roller/)
 
 ### Things I'd like to improve:
 - The overall layout of the dice rolling simulation could be better.
