@@ -1,0 +1,26 @@
+<div class="card">
+  <div class="card-header">Current Results</div>
+  <div class="card-block"
+       *ngIf="results">
+    <div class="card-text"
+         style="display: flex; justify-content: space-between;">
+      <span></span>
+      <span *ngFor="let result of results"
+            [style.color]="result.color">
+        <strong style="font-size: 30px;">{{result.value}}</strong>
+      </span>
+      <span></span>
+    </div>
+  </div>
+  <div class="card-footer">
+    <button class="btn btn-link"
+            id="slowBtn"
+            (click)="rollClick.next(slow)">Slow Roll</button>
+    <button class="btn btn-link"
+            id="mediumBtn"
+            (click)="rollClick.next(medium)">Medium Roll</button>
+    <button class="btn btn-link"
+            id="hardBtn"
+            (click)="rollClick.next(hard)">Hard Roll</button>
+  </div>
+</div>

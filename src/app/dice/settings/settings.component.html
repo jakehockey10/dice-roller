@@ -1,0 +1,39 @@
+<div class="card">
+  <div class="card-header">Settings</div>
+  <div class="card-block">
+    <!-- <div class="card-title">Settings</div> -->
+    <form>
+      <section class="form-block">
+        <div class="form-group">
+          <label>Stats</label>
+          <div class="toggle-switch">
+            <input type="checkbox"
+                   id="statsToggle"
+                   name="statsShowing"
+                   [(ngModel)]="statsShowing">
+            <label for="statsToggle"></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Sky Box</label>
+          <div class="toggle-switch">
+            <input type="checkbox"
+                   id="skyBoxToggle"
+                   name="skyBoxShowing"
+                   [(ngModel)]="skyBoxShowing">
+            <label for="skyBoxToggle"></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Number of dice</label>
+          <input type="number"
+                 id="numberOfDice"
+                 name="numberOfDice"
+                 min="1"
+                 max="6"
+                 [(ngModel)]="numberOfDice">
+        </div>
+      </section>
+    </form>
+  </div>
+</div>
