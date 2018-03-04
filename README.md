@@ -25,6 +25,7 @@ I have deployed this to my github pages: [Dice Roller](https://jakehockey10.gith
 - The simulation is finished well before the animation makes that apparent to the user, so it is confusing that the roll results show up prior to the dice appear to stabilize.  Syncing the physics with the animation, or at least appearing to, would simplify further development reliant on the dice rolling.
 - I could have this rely on a backend service like firebase, a Ruby on Rails API, or a C# Web API so that there is persistance with the results of the dice rolls.  I could also introduce websockets so that multiple users could roll dice together, potentially having various dice-based games facilitated for the users in a "room" or at a "table."
 - As with other projects I've worked on in the past, introducing automatic codebase documentation with a tool like [`compodoc`](https://github.com/compodoc/compodoc) would provide a place for developers to stay familiar with an ever growing codebase.
+- Having a service worker at this point in development isn't necessary, but I had one by default and for whatever reason, it wasn't happy when deploying to Github Pages and I think it had to do with having to change the `base-href` of the application during a production build so that it would work on Github Pages.  I'd like to use the service worker once a backend service is utilized so that I can make this application work offline and be a PWA.
 
 ## Development server
 
