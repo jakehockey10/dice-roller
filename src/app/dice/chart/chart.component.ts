@@ -12,10 +12,11 @@ import { DiceService } from './../dice.service';
 export class ChartComponent implements OnInit {
 
   @ViewChild('chart') chart: GoogleChartComponent;
+
   chartData: {
     chartType: string,
     dataTable: (string | number)[][],
-    options: { title: string, vAxis: { title: string }, hAxis: { title: string }, seriesType: string, legend: string }
+    options: { title: string, vAxis: { title: string }, hAxis: { title: string }, seriesType: string, legend?: string }
   };
 
   constructor(
@@ -24,7 +25,7 @@ export class ChartComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    window.addEventListener('resize', () => { this.chart.redraw(); });
+    window.addEventListener('resize', () => this.chart.redraw());
     this._diceService.results.subscribe(results => {
       if (results) { this.chartData = this._chartService.updateChartData(results); }
     });

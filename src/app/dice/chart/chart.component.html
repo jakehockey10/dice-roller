@@ -1,8 +1,9 @@
-<div class="card">
-  <div class="card-header">Overall Results</div>
-  <div class="card-block"
-       *ngIf="chartData">
-    <google-chart #chart
-                  [data]="chartData"></google-chart>
-  </div>
-</div>
+<!-- <div class="card"> -->
+<div class="card-header"
+     *ngIf="chartData">Overall Results</div>
+<!-- <div class="card-block" -->
+<!-- *ngIf="chartData"> -->
+<google-chart #chart
+              [data]="chartData"></google-chart>
+<!-- </div> -->
+<!-- </div> -->

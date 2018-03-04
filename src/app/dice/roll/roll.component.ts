@@ -14,6 +14,8 @@ export class RollComponent implements OnInit, OnDestroy {
   @ViewChild('canvasWrapper') canvasWrapper: ElementRef;
   @ViewChild(CurrentRollComponent) currentRoll: CurrentRollComponent;
 
+  private _animationHandle: number;
+
   constructor(private _diceService: DiceService) { }
 
   ngOnInit() {
@@ -23,12 +25,16 @@ export class RollComponent implements OnInit, OnDestroy {
     this._diceService.results.subscribe(results => {
       if (results) { this.currentRoll.results = results }
     });
-    requestAnimationFrame(() => this.animate());
+    this._animationHandle = requestAnimationFrame(() => this.animate());
   }
 
   ngOnDestroy(): void {
-    // TODO: Is this needed?
-    // window.removeEventListener('resize');
+    // TODO: How should I test this?  Without dealing with the animation handle,
+    // going back and forth between pages would add yet another animation loop
+    // on top of what was already going on.  This fixes that.  But how do I 
+    // test/prove that?
+    cancelAnimationFrame(this._animationHandle);
+    this._animationHandle = undefined;
   }
 
   roll(throwSpeed: ThrowSpeed) {
@@ -36,10 +42,11 @@ export class RollComponent implements OnInit, OnDestroy {
   }
 
   private animate() {
+    this._animationHandle = undefined;
     this._diceService.updatePhysics();
     this._diceService.render();
     this._diceService.update();
-    requestAnimationFrame(() => this.animate());
+    this._animationHandle = requestAnimationFrame(() => this.animate());
   }
 
 }

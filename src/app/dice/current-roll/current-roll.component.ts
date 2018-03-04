@@ -12,7 +12,9 @@ export class CurrentRollComponent implements OnInit {
   @Input() results: any;
   @Output() rollClick = new EventEmitter<ThrowSpeed>();
 
-  ThrowSpeed = ThrowSpeed;
+  slow = ThrowSpeed.slow;
+  medium = ThrowSpeed.medium;
+  hard = ThrowSpeed.hard;
 
   constructor() { }
 

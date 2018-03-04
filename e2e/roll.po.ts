@@ -8,4 +8,5 @@ export class RollPage {
     //   getParagraphText() {
     //     return element(by.css('app-root > clr-main-container > clr-header > div.branding > a > span.title')).getText();
     //   }
+
 }

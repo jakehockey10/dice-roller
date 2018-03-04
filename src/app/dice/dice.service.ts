@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { Stats } from 'three-stats';
 import { DiceD6, DiceManager } from 'threejs-dice';
 
+import { DiceValue } from './dice-value';
 import { ThrowSpeed } from './throw-speed.enum';
 
 declare const require: (moduleId: string) => any;
@@ -91,15 +92,18 @@ export class DiceService {
     }
   }
 
-  set numberOfDice(value: number) {
-    let diceToAdd = value - this._dice.length;
-    if (diceToAdd > 0) {
+  set numberOfDice(value: DiceValue) {
+    const diceToAddOrRemove = value - this._dice.length;
+    if (diceToAddOrRemove > 0) {
+      const diceToAdd = diceToAddOrRemove;
       this.addDice(diceToAdd);
     } else {
-      while (diceToAdd !== 0) {
+      let diceToRemove = -diceToAddOrRemove;
+      while (diceToRemove !== 0) {
         const d = this._dice.pop();
+        console.log(this._dice.length);
         this._scene.remove(d.getObject());
-        diceToAdd--;
+        diceToRemove--;
       }
     }
   }
@@ -163,6 +167,7 @@ export class DiceService {
   private createRenderer() {
     this._renderer = new THREE.WebGLRenderer({ antialias: true });
     this._renderer.setSize(this.width, this.height);
+    this._renderer.domElement.id = 'renderer';
     this._renderer.shadowMap.enabled = true;
     this._renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   }
@@ -173,6 +178,7 @@ export class DiceService {
 
   private addStats() {
     this._stats = new Stats();
+    this._stats.domElement.id = 'stats';
     this._stats.domElement.style.position = 'relative';
     this._stats.domElement.style.top = '-90%';
     this._stats.domElement.style.left = '24px';

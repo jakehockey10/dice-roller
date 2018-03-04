@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 
+import { DiceValue } from '../dice-value';
 import { DiceService } from './../dice.service';
 
 @Component({
@@ -9,9 +10,9 @@ import { DiceService } from './../dice.service';
 })
 export class SettingsComponent implements OnInit {
 
-  @Input() statsShowing: boolean;
-  @Input() skyBoxShowing: boolean;
-  @Input() numberOfDice: number;
+  private _statsShowing: boolean;
+  private _skyBoxShowing: boolean;
+  private _numberOfDice: DiceValue;
 
   constructor(private _diceService: DiceService) { }
 
@@ -19,20 +20,38 @@ export class SettingsComponent implements OnInit {
     if (this.statsShowing === undefined) { this.statsShowing = false; }
     if (this.skyBoxShowing === undefined) { this.skyBoxShowing = false; }
     if (this.numberOfDice === undefined) { this.numberOfDice = 2; }
-    this._diceService.statsVisible = this.statsShowing;
-    this._diceService.skyBoxVisible = this.skyBoxShowing;
-    this._diceService.numberOfDice = this.numberOfDice;
   }
 
-  statsShowingChange(showing: boolean) {
+  get statsShowing(): boolean { return this._statsShowing; }
+
+  @Input() set statsShowing(value: boolean) {
+    this._statsShowing = value;
+    this.statsShowingChange(value);
+  }
+
+  get skyBoxShowing(): boolean { return this._skyBoxShowing; }
+
+  @Input() set skyBoxShowing(value: boolean) {
+    this._skyBoxShowing = value;
+    this.skyBoxShowingChange(value);
+  }
+
+  get numberOfDice(): DiceValue { return this._numberOfDice; }
+
+  @Input() set numberOfDice(value: DiceValue) {
+    this._numberOfDice = value;
+    this.numberOfDiceChange(value);
+  }
+
+  private statsShowingChange(showing: boolean) {
     this._diceService.statsVisible = showing;
   }
 
-  skyBoxShowingChange(showing: boolean) {
+  private skyBoxShowingChange(showing: boolean) {
     this._diceService.skyBoxVisible = showing;
   }
 
-  numberOfDiceChange(numberOfDice: number) {
+  private numberOfDiceChange(numberOfDice: DiceValue) {
     this._diceService.numberOfDice = numberOfDice;
   }
 

@@ -19,14 +19,22 @@ export class ChartService {
       vAxis: { title: 'Occurred' },
       hAxis: { title: '# of Dice' },
       seriesType: 'bars',
-      legend: 'none'
+      height: 500
+      // legend: 'none'
     }
   };
 
   constructor() { }
 
+  get chartDataTable() {
+    const subTable = this.chartData.dataTable.slice(1, 7);
+    subTable.forEach(row => row.splice(0, 1));
+    return subTable;
+  }
+
   // TODO: Get rid of that any!
   updateChartData(results: any) {
+    if (results.length === 0) { return this.chartData; }
     const rowIndex = results.length;
     results.forEach(result => {
       const columnIndex = this.findColumnIndex(result);

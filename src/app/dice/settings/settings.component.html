@@ -10,8 +10,7 @@
             <input type="checkbox"
                    id="statsToggle"
                    name="statsShowing"
-                   [(ngModel)]="statsShowing"
-                   (ngModelChange)="statsShowingChange($event)">
+                   [(ngModel)]="statsShowing">
             <label for="statsToggle"></label>
           </div>
         </div>
@@ -21,8 +20,7 @@
             <input type="checkbox"
                    id="skyBoxToggle"
                    name="skyBoxShowing"
-                   [(ngModel)]="skyBoxShowing"
-                   (ngModelChange)="skyBoxShowingChange($event)">
+                   [(ngModel)]="skyBoxShowing">
             <label for="skyBoxToggle"></label>
           </div>
         </div>
@@ -33,8 +31,7 @@
                  name="numberOfDice"
                  min="1"
                  max="6"
-                 [(ngModel)]="numberOfDice"
-                 (ngModelChange)="numberOfDiceChange($event)">
+                 [(ngModel)]="numberOfDice">
         </div>
       </section>
     </form>

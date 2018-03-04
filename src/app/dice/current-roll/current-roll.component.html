@@ -14,10 +14,13 @@
   </div>
   <div class="card-footer">
     <button class="btn btn-link"
-            (click)="rollClick.next(ThrowSpeed.soft)">Soft Roll</button>
+            id="slowBtn"
+            (click)="rollClick.next(slow)">Slow Roll</button>
     <button class="btn btn-link"
-            (click)="rollClick.next(ThrowSpeed.medium)">Medium Roll</button>
+            id="mediumBtn"
+            (click)="rollClick.next(medium)">Medium Roll</button>
     <button class="btn btn-link"
-            (click)="rollClick.next(ThrowSpeed.hard)">Hard Roll</button>
+            id="hardBtn"
+            (click)="rollClick.next(hard)">Hard Roll</button>
   </div>
 </div>
