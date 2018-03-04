@@ -1,3 +1,20 @@
-<p>
-  roll works!
-</p>
+<div class="row">
+    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+        <app-settings [statsShowing]="false"
+                      [skyBoxShowing]="false"
+                      [numberOfDice]="2"></app-settings>
+    </div>
+    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+        <app-current-roll (rollClick)="roll($event)"></app-current-roll>
+    </div>
+</div>
+<div class="row"
+     style="margin-top: 10px;">
+    <div #canvasWrapper
+         id="canvas-wrapper"></div>
+</div>
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <app-chart></app-chart>
+    </div>
+</div>
