@@ -4,7 +4,9 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 ## About
 
-This project uses [`threejs`](https://github.com/mrdoob/three.js), [`cannonjs`](https://github.com/schteppe/cannon.js), and [`threejs-Dice`](https://github.com/jakehockey10/threejs-dice) to provide a graphically sophisticated dice rolling simulator.  **Note: I had to fork and change a few things with the `threejs-Dice` library and use my own fork in this project in order to get it tow work with TypeScript/Angular.  The way it export its functionality needed to be adjusted.  You can see my pull request [here](https://github.com/byWulf/threejs-dice/pull/4).  Things focused on in this demo application are:
+This project uses [`threejs`](https://github.com/mrdoob/three.js), [`cannonjs`](https://github.com/schteppe/cannon.js), and [`threejs-Dice`](https://github.com/jakehockey10/threejs-dice) to provide a graphically sophisticated dice rolling simulator.  **Note: I had to fork and change a few things with the `threejs-Dice` library and use my own fork in this project in order to get it tow work with TypeScript/Angular.  The way it export its functionality needed to be adjusted.  You can see my pull request [here](https://github.com/byWulf/threejs-dice/pull/4).
+
+### Things focused on in this demo application are:
 - routing
 - master-child component interaction
 - integration with third-party libraries NOT written in TypeScript
@@ -14,7 +16,7 @@ This project uses [`threejs`](https://github.com/mrdoob/three.js), [`cannonjs`](
 
 I have deployed this to my github pages: https://jakehockey10.github.io/dice-roller/
 
-Things I'd like to improve:
+### Things I'd like to improve:
 - The overall layout of the dice rolling simulation could be better.
 - The roll buttons are not as intuitively located as they could be.
 - There is more component/service tests I could have written.
